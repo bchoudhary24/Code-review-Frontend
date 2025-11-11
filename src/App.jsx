@@ -17,11 +17,9 @@ function App() {
     prism.highlightAll();
   }, []);
 
-  // 👇 main function to send code to backend
   async function reviewCode() {
     try {
       setLoading(true);
-
       const response = await axios.post(
         "https://code-review-backend-2.onrender.com/ai/get-review",
         { code },
@@ -32,7 +30,6 @@ function App() {
         }
       );
 
-      // Some backends return plain text, some JSON object — handle both
       const data =
         typeof response.data === "string"
           ? response.data
@@ -89,10 +86,6 @@ function App() {
         </div>
       </main>
     </>
-  );
-}
-
-export default App;
   );
 }
 
