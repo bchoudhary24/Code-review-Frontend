@@ -17,12 +17,29 @@ function App() {
     prism.highlightAll();
   }, []);
 
+  // 👇 main function to send code to backend
   async function reviewCode() {
     try {
       setLoading(true);
-      const response = await axios.post("https://code-review-backend-2.onrender.com/ai/get-review", { code });
-      setReview(response.data);
+
+      const response = await axios.post(
+        "https://code-review-backend-2.onrender.com/ai/get-review",
+        { code },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Some backends return plain text, some JSON object — handle both
+      const data =
+        typeof response.data === "string"
+          ? response.data
+          : response.data.review || "⚠ No review text received.";
+      setReview(data);
     } catch (err) {
+      console.error("Error from backend:", err);
       setReview("⚠ Error fetching review. Please check your backend.");
     } finally {
       setLoading(false);
@@ -51,7 +68,11 @@ function App() {
             />
           </div>
 
-          <div onClick={!loading ? reviewCode : undefined} className="review">
+          <div
+            onClick={!loading ? reviewCode : undefined}
+            className="review"
+            style={{ cursor: "pointer" }}
+          >
             {loading ? (
               <>
                 <div className="spinner"></div>
@@ -68,6 +89,10 @@ function App() {
         </div>
       </main>
     </>
+  );
+}
+
+export default App;
   );
 }
 
